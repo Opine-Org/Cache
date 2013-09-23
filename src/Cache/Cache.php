@@ -34,10 +34,34 @@ class Cache extends \Memcache {
 		foreach ($keyCallbacks as $key => &$item) {
 			if (!isset($data[$key]) || $data[$key] === false) {
 				$data[$key] = $item['callback']();
-				if ($data[$key] !== false) {
-					$cache->set($key, $data[$key], MEMCACHE_COMPRESSED, $ttl);
-				}
+			}
+			if ($data[$key] !== false) {
+				$cache->set($key, $data[$key], MEMCACHE_COMPRESSED, $ttl);
 			}
 		}
+	}
+
+	public static function getBatch (Array &$items, $host='localhost', $port=11211) {
+		$count = sizeof($items);
+		$cache = self::factory($host, $port);
+		$data = $cache->get(array_keys($items), MEMCACHE_COMPRESSED);
+		$hits = 0;
+		foreach ($items as $key => &$item) {
+			if (isset($data[$key]) || $data[$key] !== false) {
+				$item = $data[$key];
+				$hits++;
+			}
+		}
+		if ($hits == $count) {
+			return true;
+		}
+		return false;
 	}	
+
+	public static function deleteBatch (Array $items, $host='localhost', $port=11211) {
+		$cache = self::factory($host, $port);
+		foreach ($items as $item) {
+			$cache->delete($item);
+		}
+	}
 }
