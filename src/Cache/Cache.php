@@ -54,6 +54,7 @@ class Cache {
 
 	public static function getSetGet ($key, $callback, $ttl=0, $host='localhost', $port=11211) {
 		if (!self::check()) {
+			return $callback();
 			return false;
 		}
 		$cache = self::factory($host, $port);
