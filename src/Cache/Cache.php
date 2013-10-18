@@ -17,7 +17,10 @@ class Cache {
 		if (!$this->check()) {
 			return false;
 		}
-		$this->memcache->pconnect($this->host, $this->port);
+		$result = @$this->memcache->pconnect($this->host, $this->port);
+		if ($result === false) {
+			return false;
+		}
 		return $this->memcache->delete($key, $timeout);
 	}
 
@@ -34,7 +37,10 @@ class Cache {
 		if (!$this->check()) {
 			return false;
 		}
-		$this->memcache->pconnect($this->host, $this->port);
+		$result = @$this->memcache->pconnect($this->host, $this->port);
+		if ($result === false) {
+			return false;
+		}
 		return $this->memcache->set($key, $value, $flag, $expire);
 	}
 
@@ -42,7 +48,10 @@ class Cache {
 		if (!$this->check()) {
 			return false;
 		}
-		$this->memcache->pconnect($this->host, $this->port);
+		$result = @$this->memcache->pconnect($this->host, $this->port);
+		if ($result === false) {
+			return false;
+		}
 		return $this->memcache->get($key, MEMCACHE_COMPRESSED);
 	}
 
@@ -51,7 +60,10 @@ class Cache {
 			return $callback();
 			return false;
 		}
-		$this->memcache->pconnect($this->host, $this->port);
+		$result = @$this->memcache->pconnect($this->host, $this->port);
+		if ($result === false) {
+			return false;
+		}
 		$data = $this->memcache->get($key, MEMCACHE_COMPRESSED);
 		if ($data === false) {
 			$data = $callback();
@@ -66,7 +78,10 @@ class Cache {
 		if (!$this->check()) {
 			return false;
 		}
-		$this->memcache->pconnect($this->host, $this->port);
+		$result = @$this->memcache->pconnect($this->host, $this->port);
+		if ($result === false) {
+			return false;
+		}
 		$data = $this->memcache->get(array_keys($keyCallbacks), MEMCACHE_COMPRESSED);
 		foreach ($keyCallbacks as $key => &$item) {
 			if (!isset($data[$key]) || $data[$key] === false) {
@@ -83,7 +98,10 @@ class Cache {
 			return false;
 		}
 		$count = sizeof($items);
-		$this->memcache->pconnect($this->host, $this->port);
+		$result = @$this->memcache->pconnect($this->host, $this->port);
+		if ($result === false) {
+			return false;
+		}
 		$data = $this->memcache->get(array_keys($items), MEMCACHE_COMPRESSED);
 		$hits = 0;
 		foreach ($items as $key => &$item) {
@@ -102,7 +120,10 @@ class Cache {
 		if (!$this->check()) {
 			return false;
 		}
-		$this->memcache->pconnect($this->host, $this->port);
+		$result = @$this->memcache->pconnect($this->host, $this->port);
+		if ($result === false) {
+			return false;
+		}
 		foreach ($items as $item) {
 			$this->memcache->delete($item);
 		}
