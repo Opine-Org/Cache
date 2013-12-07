@@ -67,7 +67,7 @@ class Cache {
 		return $this->memcache->set($key, $value, $flag, $expire);
 	}
 
-	public function get ($key, $options, $host='localhost', $port=11211) {
+	public function get ($key, $host='localhost', $port=11211) {
 		if (!$this->check()) {
 			return false;
 		}
