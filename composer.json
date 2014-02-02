@@ -2,7 +2,7 @@
     "name": "opine/cache",
     "type": "library",
     "description": "Wrapper for Memcached",
-    "keywords": ["memcached"],
+    "keywords": ["Memcached"],
     "license": "MIT",
     "authors": [
         {
