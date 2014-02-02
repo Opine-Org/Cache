@@ -1,4 +1,4 @@
-cache
+Cache
 =====
 
-Memcached wrapper
+Wrapper for Memcached
