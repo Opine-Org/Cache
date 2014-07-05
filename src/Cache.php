@@ -128,7 +128,7 @@ class Cache {
         $data = $this->memcache->get(array_keys($items), MEMCACHE_COMPRESSED);
         $hits = 0;
         foreach ($items as $key => &$item) {
-            if (isset($data[$key]) && $data[$key] !== false) {
+            if (array_key_exists($key, $data)) {
                 $item = $data[$key];
                 $hits++;
             }
