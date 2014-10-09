@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 namespace Opine;
+use Memcache;
 
 class Cache {
     private $memcache;
@@ -30,7 +31,7 @@ class Cache {
     private $port;
 
     private function check () {
-        if (!class_exists('\Memcache')) {
+        if (!class_exists('Memcache')) {
             return false;
         }
         return true;
@@ -53,7 +54,7 @@ class Cache {
         }
         $this->host = $host;
         $this->port = $port;
-        $this->memcache = new \Memcache();
+        $this->memcache = new Memcache();
     }
 
     public function set ($key, $value, $flag=null, $expire=0) {
