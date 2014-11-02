@@ -1,4 +1,5 @@
 imports:
+    - 'package-container.yml'
     - 'vendor/opine/collection/package-container.yml'
     - 'vendor/opine/route/package-container.yml'
     - 'vendor/opine/form/package-container.yml'
@@ -19,18 +20,4 @@ imports:
     - 'vendor/opine/mail/package-container.yml'
     - 'vendor/opine/uploadwrapper/package-container.yml'
     - 'vendor/opine/imageresizer/package-container.yml'
-
-services:
-    cache:
-        class:     'Opine\Cache'
-    topic:
-        class:     'Opine\Topic'
-        arguments: ['@container']
-    config:
-        class:     'Opine\Config'
-        arguments: ['%root%', '@cache']
-    db:
-        class:     'Opine\Mongo'
-        arguments: ['@config', '@topic']
-    yamlSlow:
-        class:     'Symfony\Component\Yaml\Yaml'
+    - 'vendor/opine/pubsub/package-container.yml'
