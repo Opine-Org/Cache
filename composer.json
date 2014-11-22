@@ -15,11 +15,13 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "phpunit\/phpunit": "3.7.32",
+        "opine\/interfaces": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "Opine\\": "src\/"
+            "Opine\\Cache\\": "src\/"
         }
     }
 }

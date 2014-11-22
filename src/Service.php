@@ -10,10 +10,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,10 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Opine;
+namespace Opine\Cache;
 use Memcache;
+use Exception;
+use Closure;
+use Opine\Interfaces\Cache as CacheInterface;
 
-class Cache {
+class Service implements CacheInterface {
     private $memcache;
     private $host;
     private $port;
@@ -37,7 +40,7 @@ class Cache {
         return true;
     }
 
-    public function delete ($key, $timeout=0, $host='localhost') {
+    public function delete ($key, $timeout=0) {
         if (!$this->check()) {
             return false;
         }
@@ -51,6 +54,10 @@ class Cache {
     public function __construct ($host='localhost', $port=11211) {
         if (!$this->check()) {
             return;
+        }
+        if (isset($_SERVER['cacheservice'])) {
+            $host = $_SERVER['cacheservice']['host'];
+            $port = $_SERVER['cacheservice']['port'];
         }
         $this->host = $host;
         $this->port = $port;
@@ -68,7 +75,7 @@ class Cache {
         return $this->memcache->set($key, $value, $flag, $expire);
     }
 
-    public function get ($key, $host='localhost', $port=11211, $flag=2) {
+    public function get ($key, $flag=2) {
         if (!$this->check()) {
             return false;
         }
@@ -79,7 +86,7 @@ class Cache {
         return $this->memcache->get($key, $flag);
     }
 
-    public function getSetGet ($key, $callback, $ttl=0, $host='localhost', $port=11211, $flag=2) {
+    public function getSetGet ($key, Closure $callback, $ttl=0, $flag=2) {
         if (!$this->check()) {
             return $callback();
             return false;
@@ -98,7 +105,12 @@ class Cache {
         return $data;
     }
 
-    public function getSetGetBatch (Array &$keyCallbacks, $ttl=0, $host='localhost', $port=11211, $flag=2) {
+    public function getSetGetBatch (Array &$items, $ttl=0, $flag=2) {
+        foreach ($items as $item) {
+            if (!is_callable($item)) {
+                throw new Exception('each item must have a callback defined');
+            }
+        }
         if (!$this->check()) {
             return false;
         }
@@ -106,18 +118,21 @@ class Cache {
         if ($result === false) {
             return false;
         }
-        $data = $this->memcache->get(array_keys($keyCallbacks), $flag);
-        foreach ($keyCallbacks as $key => &$item) {
+        $data = $this->memcache->get(array_keys($items));
+        foreach ($items as $key => &$item) {
             if (!isset($data[$key]) || $data[$key] === false) {
-                $data[$key] = $item['callback']();
+                $items[$key] = $item();
+            } else {
+                $items[$key] = $data[$key];
             }
-            if ($data[$key] !== false) {
-                $this->memcache->set($key, $data[$key], $flag, $ttl);
+            if ($items[$key] !== false) {
+                $this->memcache->set($key, $items[$key], $flag, $ttl);
             }
         }
+        return true;
     }
 
-    public function getBatch (Array &$items, $host='localhost', $port=11211, $flag=2) {
+    public function getBatch (Array &$items, $flag=2) {
         if (!$this->check()) {
             return false;
         }
@@ -140,7 +155,7 @@ class Cache {
         return false;
     }
 
-    public function deleteBatch (Array $items, $host='localhost', $port=11211) {
+    public function deleteBatch (Array $items, $timeout=0) {
         if (!$this->check()) {
             return false;
         }
@@ -149,7 +164,8 @@ class Cache {
             return false;
         }
         foreach ($items as $item) {
-            $this->memcache->delete($item);
+            $this->memcache->delete($item, $timeout);
         }
+        return true;
     }
 }
