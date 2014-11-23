@@ -90,7 +90,6 @@ class Service implements CacheInterface {
     public function getSetGet ($key, Closure $callback, $ttl=0, $flag=2) {
         if (!$this->check()) {
             return $callback();
-            return false;
         }
         $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
