@@ -8,7 +8,7 @@ tools:
 
     php_code_sniffer:
         config:
-        standard: PSR2
+            standard: PSR4
 
     php_cpd:
         enabled: true
