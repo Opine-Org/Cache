@@ -64,7 +64,7 @@ tools:
             reflection_checks:
                 enabled: true
             checkstyle:
-                enabled: true
+                enabled: false
                 no_trailing_whitespace: true
                 naming:
                     enabled: false

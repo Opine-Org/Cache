@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 namespace Opine\Cache;
+
 use Memcache;
 use Exception;
 use Closure;
