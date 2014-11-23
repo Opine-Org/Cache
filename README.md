@@ -1,4 +1,4 @@
 Cache
 =====
 
-Wrapper for Memcached
+Service that wraps Memcached adding useful features.
