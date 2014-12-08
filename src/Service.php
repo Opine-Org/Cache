@@ -143,9 +143,9 @@ class Service implements CacheInterface {
         }
         $data = $this->memcache->get(array_keys($items), $flag);
         $hits = 0;
-        foreach ($items as $key => &$item) {
+        foreach ($items as $key => $item) {
             if (array_key_exists($key, $data)) {
-                $item = $data[$key];
+                $items[$key] = $data[$key];
                 $hits++;
             }
         }
