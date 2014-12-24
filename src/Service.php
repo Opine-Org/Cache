@@ -29,19 +29,23 @@ use Exception;
 use Closure;
 use Opine\Interfaces\Cache as CacheInterface;
 
-class Service implements CacheInterface {
+class Service implements CacheInterface
+{
     private $memcache;
     private $host;
     private $port;
 
-    private function check () {
+    private function check()
+    {
         if (!class_exists('Memcache')) {
             return false;
         }
+
         return true;
     }
 
-    public function delete ($key, $timeout=0) {
+    public function delete($key, $timeout = 0)
+    {
         if (!$this->check()) {
             return false;
         }
@@ -49,10 +53,12 @@ class Service implements CacheInterface {
         if ($result === false) {
             return false;
         }
+
         return $this->memcache->delete($key, $timeout);
     }
 
-    public function __construct ($host='localhost', $port=11211) {
+    public function __construct($host = 'localhost', $port = 11211)
+    {
         if (!$this->check()) {
             return;
         }
@@ -65,7 +71,8 @@ class Service implements CacheInterface {
         $this->memcache = new Memcache();
     }
 
-    public function set ($key, $value, $expire=0, $flag=2) {
+    public function set($key, $value, $expire = 0, $flag = 2)
+    {
         if (!$this->check()) {
             return false;
         }
@@ -73,10 +80,12 @@ class Service implements CacheInterface {
         if ($result === false) {
             return false;
         }
+
         return $this->memcache->set($key, $value, $flag, $expire);
     }
 
-    public function get ($key, $flag=2) {
+    public function get($key, $flag = 2)
+    {
         if (!$this->check()) {
             return false;
         }
@@ -84,10 +93,12 @@ class Service implements CacheInterface {
         if ($result === false) {
             return false;
         }
+
         return $this->memcache->get($key, $flag);
     }
 
-    public function getSetGet ($key, Closure $callback, $ttl=0, $flag=2) {
+    public function getSetGet($key, Closure $callback, $ttl = 0, $flag = 2)
+    {
         if (!$this->check()) {
             return $callback();
         }
@@ -102,10 +113,12 @@ class Service implements CacheInterface {
                 $this->memcache->set($key, $data, $flag, $ttl);
             }
         }
+
         return $data;
     }
 
-    public function getSetGetBatch (Array &$items, $ttl=0, $flag=2) {
+    public function getSetGetBatch(Array &$items, $ttl = 0, $flag = 2)
+    {
         foreach ($items as $item) {
             if (!is_callable($item)) {
                 throw new Exception('each item must have a callback defined');
@@ -129,10 +142,12 @@ class Service implements CacheInterface {
                 $this->memcache->set($key, $items[$key], $flag, $ttl);
             }
         }
+
         return true;
     }
 
-    public function getBatch (Array &$items, $flag=2) {
+    public function getBatch(Array &$items, $flag = 2)
+    {
         if (!$this->check()) {
             return false;
         }
@@ -152,10 +167,12 @@ class Service implements CacheInterface {
         if ($hits == $count) {
             return true;
         }
+
         return false;
     }
 
-    public function deleteBatch (Array $items, $timeout=0) {
+    public function deleteBatch(Array $items, $timeout = 0)
+    {
         if (!$this->check()) {
             return false;
         }
@@ -166,6 +183,7 @@ class Service implements CacheInterface {
         foreach ($items as $item) {
             $this->memcache->delete($item, $timeout);
         }
+
         return true;
     }
 }
