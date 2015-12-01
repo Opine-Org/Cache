@@ -1,3 +1,5 @@
 services:
     cache:
         class: Opine\Cache\Service
+        arguments:
+            - %root%

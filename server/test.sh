@@ -1,0 +1,1 @@
+docker run --rm --link opine-memcached:memcached -v "$(pwd)/../":/app opine:phpunit --bootstrap /app/tests/bootstrap.php

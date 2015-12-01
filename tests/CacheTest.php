@@ -9,26 +9,26 @@ class CacheTest extends PHPUnit_Framework_TestCase
 {
     public function testSet()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $this->assertTrue($cache->set('phpunit-test', 'A', 30, 0));
     }
 
     public function testGet()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $this->assertTrue('A' === $cache->get('phpunit-test', 0));
     }
 
     public function testDelete()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $this->assertTrue($cache->delete('phpunit-test', 0));
         $this->assertFalse($cache->get('phpunit-test', 0));
     }
 
     public function testGetSet()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $this->assertTrue('B' === $cache->getSetGet('phpunit-test', function () {
             return 'B';
         }, 30, 0));
@@ -37,7 +37,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetSetGetBatchNoCallback()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $items = [
             'phpunit-test'  => 'C',
             'phpunit-test2' => 'D',
@@ -53,7 +53,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetSetGetBatch()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $items = [
             'phpunit-test'  => function () { return 'C'; },
             'phpunit-test2' => function () { return 'D'; },
@@ -64,7 +64,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetBatch()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $items = [
             'phpunit-test'  => function () { return 'C'; },
             'phpunit-test2' => function () { return 'D'; },
@@ -76,7 +76,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteBatch()
     {
-        $cache = new Cache();
+        $cache = new Cache(__DIR__ . '/..');
         $items = ['phpunit-test', 'phpunit-test2'];
         $this->assertTrue($cache->deleteBatch($items));
         $this->assertFalse($cache->get('phpunit-test'));

@@ -1,0 +1,1 @@
+docker run -p 11211:11211 --name opine-memcached -d memcached:1.4.24

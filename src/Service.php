@@ -28,16 +28,59 @@ use Memcache;
 use Exception;
 use Closure;
 use Opine\Interfaces\Cache as CacheInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class Service implements CacheInterface
 {
     private $memcache;
-    private $host;
-    private $port;
+    private $host = false;
+    private $port = false;
+    private $root;
+
+    public function __construct($root)
+    {
+        $this->root = $root;
+
+        // determine config environment
+        $environment = 'default';
+        if (isset($_SERVER['OPINE_ENV'])) {
+            $environment = $_SERVER['OPINE_ENV'];
+        } else {
+            $test = getenv('OPINE_ENV');
+            if ($test !== false) {
+                $environment = $test;
+            }
+        }
+        if ($environment == 'default') {
+            $environment = '.';
+        }
+
+        // determine path of file
+        $path = $root . '/config/settings/' . $environment . '/cache.yml';
+        if (!file_exists($path) && $environment != '.') {
+            $path = $root . '/config/settings/cache.yml';
+        }
+        if (!file_exists($path)) {
+            return;
+        }
+
+        // read configuration
+        $config = Yaml::parse(file_get_contents($path));
+
+        $this->host = $config['settings']['host'];
+        $this->port = $config['settings']['port'];
+        if (!$this->check()) {
+            return;
+        }
+        $this->memcache = new Memcache();
+    }
 
     private function check()
     {
         if (!class_exists('Memcache')) {
+            return false;
+        }
+        if (!$this->host) {
             return false;
         }
 
@@ -55,20 +98,6 @@ class Service implements CacheInterface
         }
 
         return $this->memcache->delete($key, $timeout);
-    }
-
-    public function __construct($host = 'localhost', $port = 11211)
-    {
-        if (!$this->check()) {
-            return;
-        }
-        if (isset($_SERVER['cacheservice'])) {
-            $host = $_SERVER['cacheservice']['host'];
-            $port = $_SERVER['cacheservice']['port'];
-        }
-        $this->host = $host;
-        $this->port = $port;
-        $this->memcache = new Memcache();
     }
 
     public function set($key, $value, $expire = 0, $flag = 2)
