@@ -43,13 +43,9 @@ class Service implements CacheInterface
 
         // determine config environment
         $environment = 'default';
-        if (isset($_SERVER['OPINE_ENV'])) {
-            $environment = $_SERVER['OPINE_ENV'];
-        } else {
-            $test = getenv('OPINE_ENV');
-            if ($test !== false) {
-                $environment = $test;
-            }
+        $test = getenv('OPINE_ENV');
+        if ($test !== false) {
+            $environment = $test;
         }
         if ($environment == 'default') {
             $environment = '.';
@@ -80,10 +76,9 @@ class Service implements CacheInterface
         if (!class_exists('Memcache')) {
             return false;
         }
-        if (!$this->host) {
+        if ($this->host === false) {
             return false;
         }
-
         return true;
     }
 
@@ -193,11 +188,7 @@ class Service implements CacheInterface
                 $hits++;
             }
         }
-        if ($hits == $count) {
-            return true;
-        }
-
-        return false;
+        return $hits == $count;
     }
 
     public function deleteBatch(Array $items, $timeout = 0)
