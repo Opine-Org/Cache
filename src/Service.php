@@ -60,16 +60,12 @@ class Service implements CacheInterface
         if (!file_exists($path) && $environment != '.') {
             $path = $root . '/config/settings/cache.yml';
         }
-        echo $path, "\n";
         if (!file_exists($path)) {
-            echo 'NO CONFIG FILE', "\n";
             return;
         }
 
         // read configuration
         $config = Yaml::parse(file_get_contents($path));
-
-        print_r($config);
 
         $this->host = $config['settings']['host'];
         $this->port = $config['settings']['port'];
@@ -82,15 +78,11 @@ class Service implements CacheInterface
     private function check()
     {
         if (!class_exists('Memcache')) {
-            echo 'no class', "\n";
             return false;
         }
         if (!$this->host) {
-            echo 'no host', "\n";
             return false;
         }
-
-        echo 'CHECK PASSED', "\n";
 
         return true;
     }
@@ -100,7 +92,7 @@ class Service implements CacheInterface
         if (!$this->check()) {
             return false;
         }
-        $result = $this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
@@ -113,7 +105,7 @@ class Service implements CacheInterface
         if (!$this->check()) {
             return false;
         }
-        $result = $this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
@@ -126,7 +118,7 @@ class Service implements CacheInterface
         if (!$this->check()) {
             return false;
         }
-        $result = $this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
@@ -139,7 +131,7 @@ class Service implements CacheInterface
         if (!$this->check()) {
             return $callback();
         }
-        $result = $this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
@@ -164,7 +156,7 @@ class Service implements CacheInterface
         if (!$this->check()) {
             return false;
         }
-        $result = $this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
@@ -189,7 +181,7 @@ class Service implements CacheInterface
             return false;
         }
         $count = sizeof($items);
-        $result = $this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
@@ -213,7 +205,7 @@ class Service implements CacheInterface
         if (!$this->check()) {
             return false;
         }
-        $result = $this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->memcache->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
