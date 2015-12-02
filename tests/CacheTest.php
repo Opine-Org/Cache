@@ -7,28 +7,30 @@ use Exception;
 
 class CacheTest extends PHPUnit_Framework_TestCase
 {
+    const ROOT = __DIR__ . '/..';
+
     public function testSet()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $this->assertTrue($cache->set('phpunit-test', 'A', 30, 0));
     }
 
     public function testGet()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $this->assertTrue('A' === $cache->get('phpunit-test', 0));
     }
 
     public function testDelete()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $this->assertTrue($cache->delete('phpunit-test', 0));
         $this->assertFalse($cache->get('phpunit-test', 0));
     }
 
     public function testGetSet()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $this->assertTrue('B' === $cache->getSetGet('phpunit-test', function () {
             return 'B';
         }, 30, 0));
@@ -37,7 +39,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetSetGetBatchNoCallback()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $items = [
             'phpunit-test'  => 'C',
             'phpunit-test2' => 'D',
@@ -53,7 +55,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetSetGetBatch()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $items = [
             'phpunit-test'  => function () { return 'C'; },
             'phpunit-test2' => function () { return 'D'; },
@@ -64,7 +66,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetBatch()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $items = [
             'phpunit-test'  => function () { return 'C'; },
             'phpunit-test2' => function () { return 'D'; },
@@ -76,7 +78,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteBatch()
     {
-        $cache = new Cache(__DIR__ . '/..');
+        $cache = new Cache(self::ROOT);
         $items = ['phpunit-test', 'phpunit-test2'];
         $this->assertTrue($cache->deleteBatch($items));
         $this->assertFalse($cache->get('phpunit-test'));

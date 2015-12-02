@@ -60,7 +60,9 @@ class Service implements CacheInterface
         if (!file_exists($path) && $environment != '.') {
             $path = $root . '/config/settings/cache.yml';
         }
+        echo $path, "\n";
         if (!file_exists($path)) {
+            echo 'NO CONFIG FILE', "\n";
             return;
         }
 
@@ -78,9 +80,11 @@ class Service implements CacheInterface
     private function check()
     {
         if (!class_exists('Memcache')) {
+            echo 'no class', "\n";
             return false;
         }
         if (!$this->host) {
+            echo 'no host', "\n";
             return false;
         }
 
