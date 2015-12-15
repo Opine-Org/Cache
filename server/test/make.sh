@@ -1,1 +1,1 @@
-docker build -t="opine:phpunit" .
+docker build -t="opine:phpunit-cache" .
