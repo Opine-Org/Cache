@@ -1,15 +1,9 @@
 language: php
 php:
-  - 5.6
+  - '7.0'
 
 install:
   - composer install
-
-services:
-  - memcached
-
-before_script:
-  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 script: vendor/bin/phpunit --coverage-clover=coverage.clover
 

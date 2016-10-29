@@ -58,7 +58,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
         $cache = new Cache(self::ROOT);
         $items = [
             'phpunit-test'  => function () { return 'C'; },
-            'phpunit-test2' => function () { return 'D'; },
+            'phpunit-test2' => function () { return 'D'; }
         ];
         $this->assertTrue($cache->getSetGetBatch($items, 30, 0));
         $this->assertTrue('B' === $items['phpunit-test']);
@@ -69,7 +69,7 @@ class CacheTest extends PHPUnit_Framework_TestCase
         $cache = new Cache(self::ROOT);
         $items = [
             'phpunit-test'  => function () { return 'C'; },
-            'phpunit-test2' => function () { return 'D'; },
+            'phpunit-test2' => function () { return 'D'; }
         ];
         $this->assertTrue($cache->getBatch($items, 0));
         $this->assertTrue('B' === $items['phpunit-test']);

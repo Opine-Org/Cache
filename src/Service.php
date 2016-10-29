@@ -24,7 +24,6 @@
  */
 namespace Opine\Cache;
 
-use Memcache;
 use Exception;
 use Closure;
 use Opine\Interfaces\Cache as CacheInterface;
@@ -32,7 +31,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class Service implements CacheInterface
 {
-    private $memcache;
+    private $engine;
     private $host = false;
     private $port = false;
     private $root;
@@ -54,87 +53,64 @@ class Service implements CacheInterface
         // determine path of file
         $path = $root . '/../config/settings/' . $environment . '/cache.yml';
         if (!file_exists($path) && $environment != '.') {
-            $path = $root . '/../config/settings/cache.yml';
+            $path = $root . '/config/settings/cache.yml';
         }
         if (!file_exists($path)) {
             return;
         }
 
-        // read configuration
-        $config = Yaml::parse(file_get_contents($path));
-
-        $this->host = $config['settings']['host'];
-        $this->port = $config['settings']['port'];
-        if (!$this->check()) {
+        if (class_exists('\Memcache')) {
+            // read configuration
+            $config = Yaml::parse(file_get_contents($path));
+            $this->host = $config['settings']['host'];
+            $this->port = $config['settings']['port'];
+            $this->engine = new \Memcache();
             return;
         }
-        $this->memcache = new Memcache();
-    }
-
-    private function check()
-    {
-        if (!class_exists('Memcache')) {
-            return false;
-        }
-        if ($this->host === false) {
-            return false;
-        }
-        return true;
+        $this->engine = new FileCache($this->root);
     }
 
     public function delete($key, $timeout = 0)
     {
-        if (!$this->check()) {
-            return false;
-        }
-        $result = @$this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->engine->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
 
-        return $this->memcache->delete($key, $timeout);
+        return $this->engine->delete($key, $timeout);
     }
 
     public function set($key, $value, $expire = 0, $flag = 2)
     {
-        if (!$this->check()) {
-            return false;
-        }
-        $result = @$this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->engine->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
 
-        return $this->memcache->set($key, $value, $flag, $expire);
+        return $this->engine->set($key, $value, $flag, $expire);
     }
 
     public function get($key, $flag = 2)
     {
-        if (!$this->check()) {
-            return false;
-        }
-        $result = @$this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->engine->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
 
-        return $this->memcache->get($key, $flag);
+        return $this->engine->get($key, $flag);
     }
 
     public function getSetGet($key, Closure $callback, $ttl = 0, $flag = 2)
     {
-        if (!$this->check()) {
-            return $callback();
-        }
-        $result = @$this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->engine->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
-        $data = $this->memcache->get($key, $flag);
+        $data = $this->engine->get($key, $flag);
         if ($data === false) {
             $data = $callback();
             if ($data !== false) {
-                $this->memcache->set($key, $data, $flag, $ttl);
+                $this->engine->set($key, $data, $flag, $ttl);
             }
         }
 
@@ -148,14 +124,11 @@ class Service implements CacheInterface
                 throw new Exception('each item must have a callback defined');
             }
         }
-        if (!$this->check()) {
-            return false;
-        }
-        $result = @$this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->engine->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
-        $data = $this->memcache->get(array_keys($items));
+        $data = $this->engine->get(array_keys($items));
         foreach ($items as $key => &$item) {
             if (!isset($data[$key]) || $data[$key] === false) {
                 $items[$key] = $item();
@@ -163,7 +136,7 @@ class Service implements CacheInterface
                 $items[$key] = $data[$key];
             }
             if ($items[$key] !== false) {
-                $this->memcache->set($key, $items[$key], $flag, $ttl);
+                $this->engine->set($key, $items[$key], $flag, $ttl);
             }
         }
 
@@ -172,15 +145,12 @@ class Service implements CacheInterface
 
     public function getBatch(Array &$items, $flag = 2)
     {
-        if (!$this->check()) {
-            return false;
-        }
         $count = sizeof($items);
-        $result = @$this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->engine->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
-        $data = $this->memcache->get(array_keys($items), $flag);
+        $data = $this->engine->get(array_keys($items), $flag);
         $hits = 0;
         foreach ($items as $key => $item) {
             if (array_key_exists($key, $data)) {
@@ -193,15 +163,12 @@ class Service implements CacheInterface
 
     public function deleteBatch(Array $items, $timeout = 0)
     {
-        if (!$this->check()) {
-            return false;
-        }
-        $result = @$this->memcache->pconnect($this->host, $this->port);
+        $result = @$this->engine->pconnect($this->host, $this->port);
         if ($result === false) {
             return false;
         }
         foreach ($items as $item) {
-            $this->memcache->delete($item, $timeout);
+            $this->engine->delete($item, $timeout);
         }
 
         return true;
