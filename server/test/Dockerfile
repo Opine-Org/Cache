@@ -1,3 +1,5 @@
-FROM phpunit/phpunit:5.0.3
+FROM phpunit/phpunit:5.5.0
 
-RUN printf "\n" | pecl install memcache
+RUN apk --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing add php7-ctype
+
+#RUN printf "\n" | pecl install memcache
