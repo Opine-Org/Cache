@@ -52,13 +52,16 @@ class Service implements CacheInterface
 
         // determine path of file
         $path = $root . '/../config/settings/' . $environment . '/cache.yml';
-        if (!file_exists($path) && $environment != '.') {
+        if (!file_exists($path)) {
             $path = $root . '/config/settings/cache.yml';
         }
-        if (!file_exists($path) && $environment != '.') {
+        if (!file_exists($path)) {
             $path = $root . '/../config/settings/cache.yml';
         }
         if (!file_exists($path)) {
+            fwrite(STDERR, print_r([
+                $root, $path
+            ], TRUE));
             return;
         }
 
