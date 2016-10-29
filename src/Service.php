@@ -50,22 +50,22 @@ class Service implements CacheInterface
             $environment = '.';
         }
 
-        // determine path of file
-        $path = $root . '/../config/settings/' . $environment . '/cache.yml';
-        if (!file_exists($path)) {
-            $path = $root . '/config/settings/cache.yml';
-        }
-        if (!file_exists($path)) {
-            $path = $root . '/../config/settings/cache.yml';
-        }
-        if (!file_exists($path)) {
-            fwrite(STDERR, print_r([
-                $root, $path
-            ], TRUE));
-            return;
-        }
-
         if (class_exists('\Memcache')) {
+            // determine path of file
+            $path = $root . '/../config/settings/' . $environment . '/cache.yml';
+            if (!file_exists($path)) {
+                $path = $root . '/config/settings/cache.yml';
+            }
+            if (!file_exists($path)) {
+                $path = $root . '/../config/settings/cache.yml';
+            }
+            if (!file_exists($path)) {
+                fwrite(STDERR, print_r([
+                    $root, $path
+                ], TRUE));
+                return;
+            }
+
             // read configuration
             $config = Yaml::parse(file_get_contents($path));
             $this->host = $config['settings']['host'];
