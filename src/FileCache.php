@@ -11,7 +11,7 @@ class FileCache {
 
     public function __construct (string $root)
     {
-        $this->root = $root . '/var/cache/';
+        $this->root = $root . '/../var/cache/';
     }
 
     // just here for Memcache compatibilty
