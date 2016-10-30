@@ -7,7 +7,7 @@ use Exception;
 
 class CacheTest extends PHPUnit_Framework_TestCase
 {
-    const ROOT = __DIR__;
+    const ROOT = __DIR__ . '/../';
 
     public function testSet()
     {
