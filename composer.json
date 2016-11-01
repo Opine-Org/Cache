@@ -1,8 +1,8 @@
 {
     "name": "opine/cache",
     "type": "library",
-    "description": "Useful service wrapper for Memcached",
-    "keywords": ["Memcached", "Cache"],
+    "description": "Useful service wrapper for caching",
+    "keywords": ["Cache"],
     "license": "MIT",
     "authors": [
         {
@@ -25,5 +25,5 @@
             "Opine\\Cache\\": "src/"
         }
     },
-    "version": "2.0.22"
+    "version": "2.0.23"
 }
