@@ -1,8 +1,8 @@
 {
     "name": "opine/cache",
     "type": "library",
-    "description": "Useful service wrapper for Memcached",
-    "keywords": ["Memcached", "Cache"],
+    "description": "Useful service wrapper for caching",
+    "keywords": ["Cache"],
     "license": "MIT",
     "authors": [
         {
