@@ -36,7 +36,12 @@ class FileCache {
             return false;
         }
         $value = (string)$value;
-        file_put_contents($path, $value);
+        $result = @file_put_contents($path, $value);
+        $root = rtrim($this->root, '/');
+        if ($result === false && !file_exists($root)) {
+            mkdir($root);
+            file_put_contents($path, $value);
+        }
         return true;
     }
 
