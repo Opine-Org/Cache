@@ -36,16 +36,17 @@ class Service implements CacheInterface
     private $port = false;
     private $root;
 
+    private static function environment()
+    {
+        return empty(getenv('OPINE_ENV')) ? 'dev' : getenv('OPINE_ENV');
+    }
+
     public function __construct($root)
     {
         $this->root = $root;
 
         // determine config environment
-        $environment = 'default';
-        $test = getenv('OPINE_ENV');
-        if ($test !== false) {
-            $environment = $test;
-        }
+        $environment = self::environment();
         if ($environment == 'default') {
             $environment = '.';
         }
